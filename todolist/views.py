@@ -9,6 +9,13 @@ from todolist.models import Todo
 from django.contrib.auth.models import User
 # Create your views here.
 def todolist(request):
+    if request.method == 'POST':
+        atodo = request.POST['todo']
+        priority = request.POST['priority']
+        user = User.objects.get(id='1')
+        todo = Todo(user=user, todo=atodo, priority=priority, flag='1')
+        todo.save()
+        return HttpResponseRedirect('/')
     todolist = Todo.objects.filter(flag=1)
     finishtodos = Todo.objects.filter(flag=0)
     return render_to_response('simpleTodo.html',
@@ -55,16 +62,6 @@ def tododelete(request, id=""):
                               {'todolist':todolist, 'finishtodos':finishtodos},
                               context_instance=RequestContext(request))
                                                        
-def addtodo(request):
-    if request.method == 'POST':
-        atodo = request.POST['todo']
-        priority = request.POST['priority']
-        user = User.objects.get(id='1')
-        todo = Todo(user=user, todo=atodo, priority=priority, flag='1')
-        todo.save()
-        return HttpResponseRedirect('/')
-    else:
-        return render_to_response('addTodo.html',context_instance=RequestContext(request))
                                                            
                                                            
 def updatetodo(request, id=''):
@@ -75,4 +72,4 @@ def updatetodo(request, id=''):
         return HttpResponseRedirect('/')
     else:
         mytodo = Todo.objects.get(id=id)
-        return render_to_response("addTodo.html",{'todo':mytodo},context_instance=RequestContext(request))
+        return render_to_response("simpleTodo.html",{'todo':mytodo},context_instance=RequestContext(request))
